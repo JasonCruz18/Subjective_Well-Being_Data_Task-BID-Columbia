@@ -20,9 +20,10 @@ set more off
 * We define the working directory
 *--------------------------
 
-global path "C:/Users/PC/Documents/BID-Columbia/Data Task"
+global path "C:\Users\PC\Documents\GitHub\Subjective_Well-Being_Data_Task-BID-Columbia\Data_Task"
 	global data "$path/data"
-	global figures "$path/figures"                                    
+	global figures "$path/figures"   
+	global tables "$path/tables" 
 	global program "$path/program" // $ symbol is useful for
 
 **********************************
@@ -139,7 +140,7 @@ cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
 
 *** producing the table to save it in tex format that compiles in latex
  
-esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab1.tex", rename(_cons Const) ///
+esttab using "${tables}/tab1.tex", rename(_cons Const) ///
 nomtitle legend ///
 cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
  se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
@@ -246,7 +247,7 @@ cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
 
 *** producing the table to save it in tex format that compiles in latex
  
-esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab2.tex", rename(_cons Const) ///
+esttab using "${tables}/tab2.tex", rename(_cons Const) ///
 nomtitle legend ///
 cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
  se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
@@ -294,7 +295,7 @@ cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
 
 *** producing the table to save it in tex format that compiles in latex
  
-esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab3.tex", rename(_cons Const) ///
+esttab using "${tables}/tab3.tex", rename(_cons Const) ///
 nomtitle legend ///
 cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
  se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
