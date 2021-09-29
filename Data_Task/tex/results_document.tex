@@ -1,0 +1,127 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}	
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{lmodern}
+\usepackage[usenames]{color}
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{lscape}
+\usepackage{longtable}
+\usepackage{graphicx}
+%\usepackage{hyperref}
+\usepackage{url}
+%\usepackage{xcolor}
+%\usepackage{titlesec}
+%\usepackage{kpfonts}
+\usepackage{colortbl}
+
+%%%%
+%para no cortar palabras por silabas
+\usepackage[none]{hyphenat}
+
+%internlineado
+
+\usepackage{setspace}
+
+
+\usepackage{blindtext}
+\usepackage{hyperref}
+
+\setlength{\parindent}{0pt}
+
+\usepackage{color,hyperref}
+\definecolor{darkblue}{rgb}{0.0667, 0.1255, 0.1922}
+\hypersetup{colorlinks,breaklinks,
+	linkcolor=darkblue,urlcolor=darkblue,
+	anchorcolor=darkblue,citecolor=darkblue}
+%%%%
+
+\usepackage[table]{xcolor}
+\usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry}
+
+\usepackage[section]{placeins}
+\usepackage{epstopdf}
+
+\usepackage{tikz}
+
+%\titleformat{\chapter}[frame]
+%{\LARGE\color{AzulClaro}}{\filright\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+%\titleformat*{\section}{\Large\bfseries\color{blue}}
+
+\title{\huge{Subjective Well-Being Data Task}}
+
+\author{ 
+	Jason Cruz\\ 
+	\href{mailto:164468@unsaac.edu.pe}{164468@unsaac.edu.pe}
+} 
+
+\date{\ Setiembre, 2021}
+
+\begin{document}
+	\maketitle 
+	
+%\tableofcontents{}
+	
+\section*{{\textcolor[rgb]{0.0667, 0.1255, 0.1922}{Question 1}}}
+	\subsection*{\normalsize{a) Load ratings.csv}}
+	\subsection*{\normalsize{b) Report the number of unique respondents and the number of unique aspects in the data set}}
+	\subsection*{\normalsize{c) Check to see if each respondent has only rated each aspect once. If this is not true, only include the most recent observation and report the number of observations you have dropped.}}
+	\subsection*{\normalsize{d) Calculate the average rating for each respondent. We will call this measure subjective riches. Report the minimum, 25th percentile, 50th percentile, 75th percentile, and maximum subjective riches value.}}	
+\section*{{\textcolor[rgb]{0.0667, 0.1255, 0.1922}{Question 2}}}
+	\subsection*{\normalsize{a) Load demographics.csv}}
+	\subsection*{\normalsize{b) Report the number of rows and check to see if it is the same as the number of unique respondents you calculated in question 1.}}
+	\subsection*{\normalsize{c) Merge the subjective riches data from question 1 with the demographics data.}}
+	\subsection*{\normalsize{d) Regress (with OLS) subjective riches on income and report the results.}}
+	
+	\begin{center}
+		\includegraphics[width=1\linewidth]{"C:/Users/PC/Documents/BID-Columbia/Data Task/figures/model_1.pdf"}
+	\end{center}
+	
+	\input{"C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab1.tex"}
+	
+	\begin{itemize}
+		\item Interpret the results. What is the relationship between income and subjective riches? (Max
+		100 words).
+		
+		There is a very weak positive relationship. The coefficient 0.0000927 (significant by p-value) is interpreted as: for each additional monetary unit that the respondent receives, his or her score in aspects of well-being increases by 0.0000927 points. This low value means that there are other determinants other than income that better explain the differences in aspects of well-being (such as health, happiness, etc.). In addition, being a bivariate model without controls, the correlation is weak with a very low R squared, although this is not a dazzling indicator in this analysis, we are practically facing an ad hoc model.
+		
+	\end{itemize}
+	\subsection*{\normalsize{e) Regress (with OLS) subjective riches on income with controls for age, $age^{2}$ (age squared), gender, level of education, and race.}}
+	
+	\input{"C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab2.tex"}
+	
+	\begin{itemize}
+		\item Interpret the results. (Max 150 words).
+	\end{itemize}
+
+The model has improved since the specification, it is more interesting the relationships of the control variables with subjective riches according to the results. For example, the negative coefficient of age (significant) shows that each additional year represents -0.35 points on the aspects of well-being, while the coefficient of age\_squared shows that at a certain age (many years of life) the respondents value more the aspects of well-being, older adults probably rate well-being aspects higher than young people. Likewise, being a male respondent means scoring the aspects of well-being with 2.57 points more than women. On the other hand, for the most part, the categories of the variables education and race score the aspects of well-being less.
+
+	\subsection*{\normalsize{f) Imagine you were also given each respondent’s household size.(Max 100 words).}}
+	
+	\input{"C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab3.tex"}
+	
+	 \textbf{How would you change your analysis above in light of this new information?}	
+	 
+	 
+	 
+\section*{{\textcolor[rgb]{0.0667, 0.1255, 0.1922}{Question 3}}}
+
+Your PI is giving a presentation to a health-policy audience, and she would like to display a figure that illustrates the relationship between subjective ratings of health, income, and age. She has asked you to produce a single scatterplot that conveys the relationship between all three variables.
+
+	\subsection*{\normalsize{a) List the steps you would take to produce the scatterplot. Remember}}
+	\begin{itemize}
+		\item Any individual/average rating data in your plot should be for aspects related to health.
+		\item All three variables should be featured in some way on the plot.
+		\item The figure should readable, effectively convey the information through visuals, and preferably
+		be intuitively understandable to an audience that has limited familiarity with the
+		survey and your data set.
+	\end{itemize}
+	\subsection*{\normalsize{b) Produce and save the scatterplot (or if you prefer, up to two proposals for alternative scatterplots).}}
+	\subsection*{\normalsize{c) From a policy perspective, understanding the determinants of well-being is an important question. Describe the ways in which your regressions in the previous question and your scatterplot(s) help or do not help answer this question. Think about your proxy for well-being (subjective ratings) as well as the specification of your regressions. (Max 250 words)}}
+\end{document}	
