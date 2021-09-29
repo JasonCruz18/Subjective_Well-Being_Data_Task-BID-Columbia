@@ -20,10 +20,11 @@ set more off
 * We define the working directory
 *--------------------------
 
-global path "C:/Users/PC/Documents/BID-Columbia/Data Task"
+global path "C:\Users\PC\Documents\GitHub\Subjective_Well-Being_Data_Task-BID-Columbia\Data_Task"
 	global data "$path/data"
-	global figures "$path/figures"                                    
-	global program "$path/program" 
+	global figures "$path/figures"   
+	global tables "$path/tables" 
+	global program "$path/program" // $ symbol is useful for
 
 **********************************
 * 			Question 1			 *
@@ -52,15 +53,9 @@ foreach x of local var{
 *---------------------------------------------------------------------------
 
 bysort worker aspect (time) : gen newid = 1 if _n==1	
-egen newid_NA = total(missing(newid))
+egen newid_NA = total(missing(newid)) //
 count if newid == .	
 drop if newid == .	
-
-local var aspect worker
-
-foreach x of local var{
-	codebook `x', compact
-}
 
 *---------------------------------------------------------------------------
 *	d) Average rating for each respondent
@@ -81,7 +76,7 @@ egen p_75_subjective_riches = pctile(subjective_riches)  , p(75) // percentile 7
 
 * This command is for summirize while the statistics in a unique table
 
-tabstat subjective_riches, s(min q max) 
+	tabstat subjective_riches, s(min q max) 
 
 
 /// Finally, we save the data modified acording to questions
@@ -106,19 +101,13 @@ import delimited using "${data}/demographics.csv", clear
 scalar number_rows = c(N)
 scalar list  number_rows
 
-local mean1 = c(N)
-di `mean1'
+* local mean1 = c(N) // This is an otherway to get number_rows (using local)
+* di `mean1'
 
 foreach x of varlist worker `$unique_respondents'{
 	codebook `x', compact
 }
 
-	
-forval i=1/10 {
-		di "looping over number: `i'"
-	}
-
-codebook worker, compact
 	
 *---------------------------------------------------------------------------
 *	c) Merging the subjective riches data with the demographics data
@@ -151,7 +140,7 @@ cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
 
 *** producing the table to save it in tex format that compiles in latex
  
-esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab1.tex", rename(_cons Const) ///
+esttab using "${tables}/tab1.tex", rename(_cons Const) ///
 nomtitle legend ///
 cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
  se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
@@ -258,7 +247,7 @@ cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
 
 *** producing the table to save it in tex format that compiles in latex
  
-esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab2.tex", rename(_cons Const) ///
+esttab using "${tables}/tab2.tex", rename(_cons Const) ///
 nomtitle legend ///
 cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
  se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
@@ -306,7 +295,7 @@ cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
 
 *** producing the table to save it in tex format that compiles in latex
  
-esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab3.tex", rename(_cons Const) ///
+esttab using "${tables}/tab3.tex", rename(_cons Const) ///
 nomtitle legend ///
 cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
  se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
@@ -314,8 +303,8 @@ cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
 *** How would you change your analysis above in light of this new information?
 
 /*
-No cambia demasiado creo, esto hay que ver con más detenimiento
-
+Coefficients of the continuous and categorical controls have changed abruptly, even changed sign. It is that to say, the "household size" would significantly influence on model. If we had "household size" in data, the results would change as this simulation shows.
+As the questions (so far) asked us for specific tasks, I were unable to carry out a more rigorous analysis. To improve analysis, I should set a better specification and  work more on the proxy. Then the estimation would be simpler. On the other hand, the R squared is not reliable. Basically, we cannot see causality but only correlation.
 */
 
 **********************************
@@ -328,6 +317,8 @@ No cambia demasiado creo, esto hay que ver con más detenimiento
 
 * Step 1
 *_________________
+
+*** I generate a new variable that contains only health aspects
 
 gen health_aspect = .
 
@@ -342,45 +333,38 @@ replace health_aspect = 7 if aspect == "your physical safety and security"
 label define aspect_l 1 "aspect1" 2 "aspect2" 3 "aspect3" 4 "aspect4" 5 "aspect5" 6 "aspect6" 7 "aspect7"
 label values health_aspect aspect_l
 
-drop if health_aspect == .
+drop if health_aspect == . // I drop those that do not correspond to health aspects or are NA
+
+*** I collapse the main variables per respondent and health aspects
 
 collapse (firstnm) income age subjective_riches, by(worker health_aspect)
 
 * Step 2
 *_________________
 
-sort age
-seperate age , by(health_aspect)
-tw scatter age1-age7 mean_rating [fw= income] || scatter age mean_rating, m(none) legend(off) 
+*** Sort by age
+
+sort age // 
 
 * Step 3
 *_________________
 
+*** Seperate age variable, by health_aspect
 
+seperate age , by(health_aspect)
 
 * Step 4
 *_________________
 
+*** Use twoway command to include several options in a unique graph, this means, of course, include three variables where one of them represents the size of the bubbles.
 
-
-
-* Step 5
-*_________________
-
-
-
-* Step 6
-*_________________
-
-
-
-
+tw scatter age1-age7 subjective_riches [fw= income] || scatter age subjective_riches, m(none) legend(off) 
+ 
 *---------------------------------------------------------------------------
 *	b) Produce and save the scatterplot
 *---------------------------------------------------------------------------
 
-
-
+graph export "${figures}\model_1.pdf", as(pdf) replace
 
 
 *---------------------------------------------------------------------------
@@ -389,11 +373,16 @@ tw scatter age1-age7 mean_rating [fw= income] || scatter age mean_rating, m(none
 
 *** Think about your proxy for well-being as well as the specification of your regressions
 
-* For this purpose, I will test the exogeneity and relevance tests for a regression where I evaluate endogeneity (this to check if it is a good instrument)
+* Perhaps it is better to find another more specific proxy variable. Then, I could test exogeneity and relevance (this to verify if it is a good instrument) and avoid endogeneity.
 	
-	
+/// My answer (Max)	
 
-
+/*
+In my opinion, the analysis previously developed is not enough to answer such an important question as “determinants of well-being”.
+Firstly, I performed a bivariate regression between subjective riches and income. This regression is not rigorous since causality is not possible; however, for this to make sense, I chose the subjective riches as a response variable and income as explanatory; doing it the other way around had no background since my variable of interest is subjective riches. It was interesting to ask the question: Will the welfare of respondents increase with higher income? But this question cannot be answered with such a simple specification.
+Secondly, when regress with continuous and categorical control variables, they latter looked more interesting since their coefficients showed higher magnitude marginal effects on the main variable. However, from my point of view, I should have modeled differently than OLS because the response variable in this case, although continuous, is limited; it is that to say, the OLS estimate does not fit the data very well. My alternative would be to model with logit or use other multinomial models.
+Finally, it may be useful to think of a welfare proxy as a more specific dependent variable (using another estimation method), as requested in question 3 f) (only for health aspects) because it is better to isolate effects for modeling.
+*/
 
 *----------------------------------THE END----------------------------------
 
