@@ -1,7 +1,7 @@
 *****************************************************************************		      BID-COLUMBIA: Subjective Well-Being Data Task				   *
 ****************************************************************************
 
-*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%7
+*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
 /*
 This dofile contains all of the commands for answer questions 1-3 from "BID-COLUMBIA: Subjective Well-Being Data Task"
 Created by: Jason Cruz (any questions to 164468@unsaac.edu.pe)
@@ -50,7 +50,7 @@ codebook, problems // Checking for database problems
 local var aspect worker
 
 foreach x of local var{
-	codebook `x', compact
+	codebook `x', compact // codebook displays a unique column in a tab
 }
 
 *---------------------------------------------------------------------------
@@ -66,12 +66,12 @@ drop if newid == .
 *	d) Average rating for each respondent
 *---------------------------------------------------------------------------
 
-* Here, calculate the average rating for each respondent.
+*** Here, calculate the average rating for each respondent.
 
 egen subjective_riches = mean(rating), by(worker) // We named "subjective_riches" to rating mean as question ask
 label var subjective_riches "subjective riches"
 
-* Here, some descriptive statistics as: min, max, percentile 25, 50 and 75 for subjective riches value as a new variables.
+*** Here, some descriptive statistics as: min, max, percentile 25, 50 and 75 for subjective riches value as a new variables.
 
 egen min_subjective_riches= min(subjective_riches) // min
 egen max_subjective_riches = max(subjective_riches) // max
@@ -79,12 +79,12 @@ egen p_25_subjective_riches = pctile(subjective_riches)  , p(25) // percentile25
 egen p_50_subjective_riches = pctile(subjective_riches)  , p(50) // percentile50
 egen p_75_subjective_riches = pctile(subjective_riches)  , p(75) // percentile 75
 
-* This command is for summirize while the statistics in a unique table
+*** This command is for summirize while the statistics in a unique table
 
 	tabstat subjective_riches, s(min q max) 
 
 
-/// Finally, we save the data modified acording to questions
+*** Finally, we save the data modified acording to questions
 
 save "${data}/ratings.dta", replace
 
@@ -96,7 +96,7 @@ save "${data}/ratings.dta", replace
 *	a) Load demographics.csv
 *---------------------------------------------------------------------------
 
-* Importamos la data recientemente guardada, esta data está limpia de acuerdo a los requerimientos exigidos por los items de la pregunta 1
+*** Importamos la data recientemente guardada, esta data está limpia de acuerdo a los requerimientos exigidos por los items de la pregunta 1
 
 import delimited using "${data}/demographics.csv", clear 
 
@@ -106,8 +106,8 @@ import delimited using "${data}/demographics.csv", clear
 scalar number_rows = c(N)
 scalar list  number_rows
 
-* local mean1 = c(N) // This is an otherway to get number_rows (using local)
-* di `mean1'
+/// local mean1 = c(N) // This is an otherway to get number_rows (using local)
+/// di `mean1'
 
 foreach x of varlist worker `$unique_respondents'{
 	codebook `x', compact
@@ -178,7 +178,7 @@ twoway (scatter subjective_riches income, yaxis(1) yscale(range(0(5)100) axis(1)
   
 graph export "${figures}\model_1.pdf", as(pdf) replace
 
-/// Interpreting the results. What is the relationship between income and subjective riches? 
+*** Interpreting the results. What is the relationship between income and subjective riches? 
  
  /*
 There is a very weak positive relationship. The coefficient 0.0000927 (significant by p-value) is interpreted as: for each additional monetary unit that the respondent receives, his or her score in aspects of well-being increases by 0.0000927 points. This low value means that there are other determinants other than income that better explain the differences in aspects of well-being (such as health, happiness, etc.). In addition, being a bivariate model without controls, the correlation is weak with a very low R squared, although this is not a dazzling indicator in this analysis, we are practically facing an ad hoc model.
@@ -202,7 +202,7 @@ foreach x of local var{
 }
 
 
-*gen education_new = .
+///gen education_new = .
 replace education_new = 1 if education == "Less than high school"
 replace education_new = 2 if education == "High school" 
 replace education_new = 3 if education == "Some college"
@@ -217,7 +217,7 @@ label values education_new education_lab
 
 tab race
 
-*gen race_new = .
+///gen race_new = .
 replace race_new = 1 if race == "White (non-Hispanic)"
 replace race_new = 2 if race == "Multiracial"
 replace race_new = 3 if race == "Hispanic (any race)"
@@ -380,7 +380,7 @@ graph export "${figures}\model_1.pdf", as(pdf) replace
 
 * Perhaps it is better to find another more specific proxy variable. Then, I could test exogeneity and relevance (this to verify if it is a good instrument) and avoid endogeneity.
 	
-/// My answer (Max)	
+/// My answer (Max 250 words)	
 
 /*
 In my opinion, the analysis previously developed is not enough to answer such an important question as “determinants of well-being”.
@@ -393,3 +393,5 @@ Finally, it may be useful to think of a welfare proxy as a more specific depende
 
 /// Visit JasonCruz18 on GitHub
 /// visit Network graph (GitHub) "https://github.com/JasonCruz18/Subjective_Well-Being_Data_Task-BID-Columbia/network" to know the sequence of my work to answer the questions of this great task
+
+*###########################################################################
