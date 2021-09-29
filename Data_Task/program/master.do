@@ -15,9 +15,6 @@
 
 clear all
 set more off
-set matsize 10000
-set maxvar 10000
-
 
 *--------------------------
 * We define the working directory
@@ -90,7 +87,6 @@ tabstat subjective_riches, s(min q max)
 /// Finally, we save the data modified acording to questions
 
 save "${data}/ratings.dta", replace
-restore
 
 **********************************
 * 			Question 2			 *
@@ -402,3 +398,4 @@ tw scatter age1-age7 mean_rating [fw= income] || scatter age mean_rating, m(none
 *----------------------------------THE END----------------------------------
 
 /// Visit JasonCruz18 on GitHub
+/// visit Network graph (GitHub) "https://github.com/JasonCruz18/Subjective_Well-Being_Data_Task-BID-Columbia/network" to know the sequence of my work to answer the questions of this great task
