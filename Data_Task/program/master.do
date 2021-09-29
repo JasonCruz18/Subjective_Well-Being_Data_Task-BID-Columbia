@@ -138,13 +138,27 @@ describe
 
 *** Descriptive statistics of some variables
 
-summ income subjective_riches
+summ subjective_riches income
 
 *** Regression using OLS
 
-reg income subjective_riches, robust // I use just one option to deal with the heteroscedasticity problem: "robust"
+eststo clear
+eststo: reg subjective_riches income, robust // I use just one option to deal with the heteroscedasticity problem: "robust"
 vif // just to confirm the suspicion of not having multicollinearity problem
-estimates store m1 // estimates is post estimation command and save results
+estout // estout is post estimation command and save results
+
+*** Editing the final table
+
+esttab, nomtitle legend ///
+cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
+ se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs."))
+
+*** producing the table to save it in tex format that compiles in latex
+ 
+esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab1.tex", rename(_cons Const) ///
+nomtitle legend ///
+cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
+ se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
 
 *** Plotting the regression to make interpretation more intuitive
 
@@ -159,33 +173,28 @@ colorpalette ///
  "212 236 221" ///
   , n(4) nograph
 
-twoway (scatter income subjective_riches, yaxis(1) yscale(range(0(500)500) axis(1)) msize(tiny) mcolor("`r(p1)'")) ///
-( lfit income subjective_riches, lcolor("`r(p2)'")) ///
-  ,xtitle("Subjective Riches", size(*0.6) color("`r(p3)'")) ///
-  xlabel(0(25)100, labsize(*0.6)) ///
-  ytitle("Income", size(*0.6) color("`r(p3)'")) ///
-  ylabel(0(50000)300000, labsize(*0.6)) ///
+twoway (scatter subjective_riches income, yaxis(1) yscale(range(0(5)100) axis(1)) msize(tiny) mcolor("`r(p1)'")) ///
+( lfit subjective_riches income, lcolor("`r(p4)'")) ///
+  ,ytitle("Subjective Riches", size(*0.6) color("`r(p2)'")) ///
+  ylabel(0(25)100, labsize(*0.6)) ///
+  xtitle("Income", size(*0.6) color("`r(p2)'")) ///
+  xlabel(0(50000)300000, labsize(*0.6)) ///
   graphregion(color(white)) ///
-  legend(cols(2) size(*0.4) region(lcolor("`r(p4)'"))) ///
-  title("Regress OLS: Subjective Riches on Income", size(*.7) box bcolor("`r(p4)'") color(white)) ///
+  legend(cols(2) size(*0.7) region(lcolor("`r(p1)'"))) ///
+  title("Regress OLS: Subjective Riches vs Income", size(*.7) box bcolor("`r(p2)'") color(white)) ///
   bgcolor(white) ylabel(, nogrid) ///
-  text(250000 15 "predicted {it:life} = 50.36 + 2.45{it:school}", place(se) box  width(46) size(vsmall) color(white) bcolor("`r(p2)'") fcolor("`r(p2)'")) ///
+  text(250000 15 "predicted {it:Subjective Riches} =  56.28 + 0.0000927{it:Income}", place(se) box  width(58) size(vsmall) color(white) bcolor("`r(p1)'") fcolor("`r(1)'")) ///
   name(model_1, replace)
   
-graph export "${figuras}\model_1.pdf", as(pdf) replace
+graph export "${figures}\model_1.pdf", as(pdf) replace
 
-reg subjective_riches log_income, robust 
-twoway (scatter subjective_riches log_income) ///
-(lfit subjective_riches log_income)
- 
 /// Interpreting the results. What is the relationship between income and subjective riches? 
  
  /*
- 
+There is a very weak positive relationship. The coefficient 0.0000927 (significant by p-value) is interpreted as: for each additional monetary unit that the respondent receives, his or her score in aspects of well-being increases by 0.0000927 points. This low value means that there are other determinants other than income that better explain the differences in aspects of well-being (such as health, happiness, etc.). In addition, being a bivariate model without controls, the correlation is weak with a very low R squared, although this is not a dazzling indicator in this analysis, we are practically facing an ad hoc model.
  */
  
- 
- *---------------------------------------------------------------------------
+*---------------------------------------------------------------------------
 *	e) Regress (OLS) subjective riches on income with controls (Model 2)
 *---------------------------------------------------------------------------
 
@@ -235,25 +244,28 @@ gen age_squared = age*age
 
 *** Regression 2 
 
-reg income subjective_riches age age_squared i.male i.education_new i.race_new, robust
+reg subjective_riches income age age_squared i.male i.education_new i.race_new, robust
 vif // just to confirm the suspicion of not having multicollinearity problem
-estimates store m2 // save Model 2
 
-estout m1 m2 // it displays both models in a single table
+*** Both models (it´s useful to interpret the results)
 
-* Editing the final table
+eststo clear
+eststo: reg subjective_riches income, robust
+eststo: reg subjective_riches income age age_squared i.male i.education_new i.race_new, robust
+estout // it displays both models in a single table
 
-estout, drop(0.male 1.education_new 1.race_new) rename(1.male Male 2.education_new Master's_degree 3.education_new Less_than_high_school 4.education_new High_school 5.education_new Graduate_degree 6.education_new Doctoral_degree 7.education_new Bachelor's_degree 2.race_new Multiracial 3.race_new Hispanic 4.race_new Black 5.race_new Asian 6.race_new Other _cons Const) ///
-mlabels("(1)" "(2)") title("Tabla 1") legend ///
+*** Editing the final table
+
+esttab, nomtitle legend ///
 cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
  se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs."))
 
 *** producing the table to save it in tex format that compiles in latex
  
-estout using "C:/Users/PC/Documents/BID-Columbia/tex/first.tex", rename(_cons Const) ///
-title("Tabla 1") legend ///
-cells(b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value)) ///
- se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace 
+esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab2.tex", rename(_cons Const) ///
+nomtitle legend ///
+cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
+ se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
 
 *** An alternative optimal regression given that we have categorical control variables (add interactions between variables in the regression)
 
@@ -262,7 +274,7 @@ reg income c.subjective_riches##i.male c.subjective_riches##i.education_new c.su
 /// Interpreting the results.
 
 /*
-
+The model has improved since the specification, it is more interesting the relationships of the control variables with subjective riches according to the results. For example, the negative coefficient of age (significant) shows that each additional year represents -0.35 points on the aspects of well-being, while the coefficient of age_squared shows that at a certain age (many years of life) the respondents value more the aspects of well-being, older adults probably rate well-being aspects higher than young people. Likewise, being a male respondent means scoring the aspects of well-being with 2.57 points more than women. On the other hand, for the most part, the categories of the variables education and race score the aspects of well-being less.
 */
  
 *---------------------------------------------------------------------------
@@ -281,14 +293,34 @@ su household_size // The mean is not far from what is seen empirically (for exam
 
 reg income subjective_riches household_size age age_squared i.male i.education_new i.race_new, robust
 vif // just to confirm the suspicion of not having multicollinearity problem
-estimates store m3 // save Model 3
+
+*** I display the results for the 3 models
+
+eststo clear
+eststo: reg subjective_riches income, robust
+eststo: reg subjective_riches income age age_squared i.male i.education_new i.race_new, robust
+eststo: reg income subjective_riches household_size age age_squared i.male i.education_new i.race_new, robust
+estout // it displays 3 models in a single table
+
+*** Editing the final table
+
+esttab, nomtitle legend ///
+cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
+ se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs."))
+
+*** producing the table to save it in tex format that compiles in latex
+ 
+esttab using "C:/Users/PC/Documents/BID-Columbia/Data Task/tables/tab3.tex", rename(_cons Const) ///
+nomtitle legend ///
+cells("b( star label(Coef.) fmt(2)) p(fmt(2) label(p-value))" ///
+ se(fmt(2) label(S.E.)))  stats(r2 N, labels("R-cuadrado" "N. de obs.")) replace
 
 *** How would you change your analysis above in light of this new information?
 
 /*
+No cambia demasiado creo, esto hay que ver con más detenimiento
 
 */
-
 
 **********************************
 * 			Question 3			 *
@@ -370,4 +402,3 @@ tw scatter age1-age7 mean_rating [fw= income] || scatter age mean_rating, m(none
 *----------------------------------THE END----------------------------------
 
 /// Visit JasonCruz18 on GitHub
-
